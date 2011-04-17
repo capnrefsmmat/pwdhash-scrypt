@@ -1,0 +1,64 @@
+<html>
+<head>
+<title>scrypt tester</title>
+<style>
+body,div,p,a,td,input {font-family: Arial, Helvetica, sans-serif; font-size: 10pt;}
+h1 {font-size: 14pt; text-align: center;}
+#status {background-color: #C1C1FF; padding: 10 10 10 10;}
+</style>
+</head>
+<body>
+
+<h1>
+scrypt test form
+</h1>
+<div>
+<p>Demo of scrypt:</p>
+</div>
+
+<form name="scryptform">
+<table>
+<tr><td>Password:</td><td><input id="password" type="text" size="18"></td></tr>
+<tr><td>Salt:</td><td><input id="salt" type="text" size="18"></td></tr>
+<tr><td>N:</td><td><input id="N" type="text" value="16" size="4"></td></tr>
+<tr><td>r:</td><td><input id="r" type="text" value="1" size="4"></td></tr>
+<tr><td>p:</td><td><input id="p" type="text" value="1" size="4"></td></tr>
+<tr><td>Bytes:</td><td><input id="bytes" type="text" value="64" size="4"></td></tr>
+<tr><td></td><td><input type="button" value="Derive Key" onclick="derive_key()"></td></tr>
+</table>
+</form>
+<div id="status"></div>
+
+<script src="crypto-js/crypto/crypto.js"></script>
+<script src="crypto-js/hmac/hmac.js"></script>
+<script src="crypto-js/pbkdf2/pbkdf2.js"></script>
+<script src="crypto-js/sha256/sha256.js"></script>
+<script src="scrypt.js"></script>
+<script>
+function display_message(msg)
+{
+	document.getElementById("status").innerHTML = msg;
+}
+
+function derive_key()
+{
+	var password = document.scryptform.password.value;
+	var salt = document.scryptform.salt.value;
+	var N = parseInt(document.scryptform.N.value, 10);
+	var r = parseInt(document.scryptform.r.value, 10);
+	var p = parseInt(document.scryptform.p.value, 10);
+	var bytes = parseInt(document.scryptform.bytes.value, 10);
+
+	if (bytes < 0 || bytes > 100)
+		return display_message("Invalid number of bytes. The maximum is limit to 100 for this demo.");
+
+	var result_callback = function(key) {
+		display_message("The derived " + (bytes*8) + "-bit key is: " + key)};
+	
+	result_callback(toHex(scrypt(password, salt, N, r, p, bytes)));
+}
+</script>
+
+</body>
+
+</html>
